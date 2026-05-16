@@ -14,3 +14,18 @@ class UserTestCase(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['name'], 'testeUser')
         self.assertNotIn('password', response.data)
+    
+    def test_login_user(self):
+        self.client.post('/api/users/register/',{
+            'name': 'Testeloginuser',
+            'email': 'testlogin@email.com',
+            'phone': '13999999999',
+            'password': 'passwordtest'
+        })
+        
+        response = self.client.post('/api/token/', {
+            'email': 'testlogin@email.com',
+            'password': 'passwordtest'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('access', response.data)

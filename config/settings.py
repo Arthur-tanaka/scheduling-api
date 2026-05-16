@@ -82,6 +82,7 @@ REST_FRAMEWORK = {
 CELERY_BROKER_URL = config('REDIS_URL')
 CELERY_RESULT_BACKEND = config('REDIS_URL')
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # SendGrid
 SENDGRID_API_KEY = config('SENDGRID_API_KEY')

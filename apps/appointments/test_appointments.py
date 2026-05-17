@@ -11,6 +11,11 @@ class AgendamentosTestCase(TestCase):
             name='TestUserAgendamento',
             password='testagendamentopassword',
         )
+        self.user2 = User.objects.create_user(
+            email = 'testUser2@email.com',
+            name = 'User2Test',
+            password = 'testUser2'
+        )
         self.service = Service.objects.create(
             name='servicoteste',
             price='100.00',
@@ -21,7 +26,12 @@ class AgendamentosTestCase(TestCase):
             'email': 'testUserAgendamento@email.com',
             'password': 'testagendamentopassword',
         })
+        response2 = self.client.post('/api/token/', {
+            'email': 'testUser2@email.com',
+            'password': 'testUser2',
+        })
         self.token = response.data['access']
+        self.token2 = response2.data['access']
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
         
     def test_create_agendamento(self):
@@ -31,3 +41,12 @@ class AgendamentosTestCase(TestCase):
         })
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['user'], self.user.id)
+        
+    def test_isolamento(self):
+        response = self.client.post('/api/appointments/', {
+            'service': self.service.id,
+            'appointment_date': "2026-05-30T10:00:00"
+        })
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token2)
+        response = self.client.get('/api/appointments/')
+        self.assertEqual(len(response.data), 0)
